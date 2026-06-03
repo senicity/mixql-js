@@ -21,7 +21,7 @@
   "homepage": "https://senicity.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/senicity/mixql.git"
+    "url": "git+https://github.com/senicity/mixql-js.git"
   },
   "engines": {
     "node": ">=14.0.0"
