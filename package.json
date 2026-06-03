@@ -1,0 +1,29 @@
+{
+  "name": "@senicity/mixql",
+  "version": "1.0.0",
+  "description": "A fluent Node.js client library for the MixQL encryption server",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node build.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mixql",
+    "encryption",
+    "hashing",
+    "senicity"
+  ],
+  "author": "Senicity <https://senicity.com>",
+  "license": "SEE LICENSE IN NOTICE",
+  "homepage": "https://senicity.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/senicity/mixql.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
