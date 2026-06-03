@@ -109,6 +109,69 @@ const result = await mixql.select('SHA1(CONCAT(:a, :b))')
   .execute();
 ```
 
+### SHA-256 & SHA-512 Hashing
+
+```js
+// SHA-256 hash (recommended over SHA1)
+const result = await mixql.sha256()
+  .bind(['password123'])
+  .execute();
+
+// SHA-512 hash
+const result = await mixql.sha512()
+  .bind(['password123'])
+  .execute();
+
+// With nested expression
+const result = await mixql.sha256('CONCAT(:a, :b)')
+  .bind(['foo', 'bar'])
+  .execute();
+
+// Uppercase output
+const result = await mixql.sha256()
+  .bind(['hello'])
+  .uppercase()
+  .execute();
+```
+
+### HMAC-SHA256
+
+```js
+// HMAC keyed hash (returns 64-char hex)
+const result = await mixql.hmac()
+  .bind(['mySecretKey', 'message to sign'])
+  .execute();
+
+// With custom expressions
+const result = await mixql.hmac(':secret', ':data')
+  .bind(['key123', 'payload'])
+  .execute();
+```
+
+### Argon2 Password Hashing
+
+```js
+// Hash a password with Argon2id
+const hash = await mixql.argon2()
+  .bind(['mypassword123'])
+  .execute();
+
+// Verify a password against a stored hash
+const result = await mixql.argon2Verify()
+  .bind([storedHash, 'mypassword123'])
+  .execute();
+
+// Chain with SHA256 pre-hashing
+const hash = await mixql.argon2('SHA256(:input)')
+  .bind(['mypassword123'])
+  .execute();
+
+// Verify chained hash
+const result = await mixql.argon2Verify(':hash', 'SHA256(:password)')
+  .bind([storedHash, 'mypassword123'])
+  .execute();
+```
+
 ### Encryption / Decryption
 
 ```js
@@ -142,6 +205,42 @@ const encrypted = await mixql.select('ENC(:input)')
   .salt('salt1', 'salt2')
   .pepper('pep1', 'pep2')
   .bind(['my secret data'])
+  .execute();
+```
+
+### AES-256-GCM Encryption (Recommended)
+
+```js
+// GCM authenticated encryption
+const encrypted = await mixql.encGcm()
+  .bind(['my secret data'])
+  .execute();
+
+// GCM decryption
+const decrypted = await mixql.decGcm()
+  .bind([encrypted.toString()])
+  .execute();
+
+// GCM with custom key
+const encrypted = await mixql.encGcm()
+  .bind(['my secret data'])
+  .key('mysecretkey123')
+  .execute();
+
+// GCM with KEY + SALT + PEPPER
+const encrypted = await mixql.encGcm()
+  .key('mykey')
+  .salt('salt1', 'salt2')
+  .pepper('pep1', 'pep2')
+  .bind(['my secret data'])
+  .execute();
+
+// GCM decrypt with same options
+const decrypted = await mixql.decGcm()
+  .key('mykey')
+  .salt('salt1', 'salt2')
+  .pepper('pep1', 'pep2')
+  .bind([encrypted.toString()])
   .execute();
 ```
 
@@ -221,6 +320,13 @@ const query = mixql.select('SHA1(:input)').bind(['test']).rawQuery();
 ### Query Types
 - `raw(query)` - Execute raw MixQL query
 - `select(expression)` - SELECT query with hash expression
+- `sha256(expr = ':input')` - SHA-256 hash
+- `sha512(expr = ':input')` - SHA-512 hash
+- `encGcm(expr = ':input')` - AES-256-GCM authenticated encrypt
+- `decGcm(expr = ':input')` - AES-256-GCM authenticated decrypt
+- `hmac(keyExpr = ':key', msgExpr = ':msg')` - HMAC-SHA256 keyed hash
+- `argon2(expr = ':input')` - Argon2id password hash
+- `argon2Verify(hashExpr = ':hash', passExpr = ':password')` - Verify Argon2 hash
 - `createSalt()` - Generate random salt
 - `createKey()` - Generate encryption key
 - `createUUID()` - Generate UUID
