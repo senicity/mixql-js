@@ -1,6 +1,6 @@
 {
   "name": "@senicity/mixql",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A fluent Node.js client library for the MixQL encryption server",
   "main": "dist/index.js",
   "files": [
